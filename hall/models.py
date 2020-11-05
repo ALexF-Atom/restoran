@@ -56,6 +56,8 @@ class UserReserved(models.Model):
 
 
 class Reservation(models.Model):
+    class Meta:
+        unique_together = ['table', 'data_reserved']
 
     user = models.ForeignKey('UserReserved', on_delete=models.CASCADE, related_name='reserved')
     table = models.ForeignKey('Table',  on_delete=models.CASCADE, related_name='reserved')
