@@ -9,7 +9,7 @@ function getDate(){
     return data
 }
 // управление выделением и модальным окном
-span.addEventListener('click', event => {
+span.addEventListener('click', _ => {
     modal.style.display = "none";
     active.classList.remove('selected');
 })
@@ -30,10 +30,10 @@ document.querySelector('#parent').addEventListener('click', event => {
   document.getElementsByName('data_reserved')[0].value = getDate();
 })
 
-window.addEventListener('load', event=>{
+window.addEventListener('load', _ =>{
     var value = JSON.parse(document.getElementById('reserv').textContent);
     if (value.length){
-        value.forEach((item, i) => {
+        value.forEach((item, _) => {
             let elem = document.getElementById('table'+item[0])
             elem.classList.add('busy');
             all_data_id.push(parseInt(elem.getAttribute('data-id')))
