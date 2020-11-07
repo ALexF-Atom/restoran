@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import  Table, Reservation, UserReserved
+from .models import Table, Reservation, UserReserved
 # Register your models here.
 
 admin.site.register(Table)
