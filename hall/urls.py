@@ -1,8 +1,10 @@
 from django.urls import path
 
-from . import views
+from .views import IndexView, RestoranDetailView, HallDetailView
+
 
 urlpatterns = [
-    path('', views.IndexView.as_view(), name='index'),
-    path('<str:date>', views.TablesView.as_view(), name='tables-view'),
+    path('', IndexView.as_view()),
+    path('<str:name>', RestoranDetailView.as_view(), name='restoran'),
+    path('<str:slug>/<str:date>', HallDetailView.as_view(), name='hall'),
 ]

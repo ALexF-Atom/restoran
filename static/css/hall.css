@@ -1,0 +1,79 @@
+.rectangle {
+	border-style: solid;
+	border-width: 3px;
+	text-align: center;
+	margin: 10px;
+	padding: 10px;
+}
+
+.ellipse {
+	border-style: solid;
+	border-radius: 50%;
+	border-width: 3px;
+	text-align: center;
+	margin: 10px;
+	padding: 10px;
+}
+
+.free {
+	background-color: green;
+}
+
+.busy {
+	background-color: red;
+}
+
+.selected {
+	background-color: blue;
+}
+
+.modalWindow {
+	display: none;
+	position: fixed;
+	z-index: 9;
+	left: 0;
+	top: 0;
+
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgb(0, 0, 0);
+	background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+	background-color: #fefefe;
+	margin: 5% auto;
+	padding: 10px;
+	border: 1px solid #888;
+	width: 60%;
+}
+
+.close {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.field {
+	background-color: rgb(170, 166, 151);
+	border-style: none;
+	position: relative;
+    overflow-x: auto;
+}
+
+.table {
+	position: absolute;
+}
+
+.card-text {
+	font-size: 0.8em;
+}

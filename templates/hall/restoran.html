@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}restoran.name{% endblock title %}
+
+{% block content %}
+
+<div class="container">
+	<div class="row">
+		{% for r in restoran.halls.all %}
+		    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+		    	<div class="card mb-3 mt-3">
+		    		<div class="card-body">
+		    			<h5 class="card-title">{{r.name}}</h5>
+		    			<p class="card-text">{{lorem}}</p>
+		    			<a href="{{r.get_absolute_url}}">Заходите к нам</a>
+		    		</div>
+		    	</div>
+		    </div>
+		{% endfor %}
+
+	</div>
+</div>
+
+
+{% endblock content %}

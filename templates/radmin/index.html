@@ -1,0 +1,10 @@
+{% extends "radmin/base_radmin.html" %}
+{% block title %}Рестораны{% endblock title %}
+
+{% block content %}
+<div class="container">
+	{% for r in restorans %}
+		<p><a href="{% url 'radmin_restoran' name=r.name %}">{{r.name}}</a></p>
+	{% endfor %}
+</div>
+{% endblock content %}

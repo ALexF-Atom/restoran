@@ -1,4 +1,4 @@
-"""restoran URL Configuration
+"""options URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.1/topics/http/urls/
@@ -17,14 +17,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
 
+from .settings import DEBUG, MEDIA_URL, MEDIA_ROOT
+from django.conf.urls.static import static
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('radmin/', include('radmin.urls')),
     path('restoran/', include('hall.urls')),
-    path('', RedirectView.as_view(url='restoran', permanent=True)),
+    path('', RedirectView.as_view(url='restoran')),
+    path('api/', include('api.urls')),
 ]
 
-
-from .settings import MEDIA_ROOT, MEDIA_URL, DEBUG
-from django.conf.urls.static import static
 if DEBUG:
     urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)

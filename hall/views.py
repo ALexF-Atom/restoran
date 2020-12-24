@@ -1,52 +1,84 @@
-from django.shortcuts import redirect
-from django.db.models import Q
-from django.views.generic import View, ListView
+from django.views.generic import ListView, DetailView
+from django.db.models import F, Case, When, Value, Exists, CharField, OuterRef
 from django.contrib import messages
-from .models import Reservation, Table
-from .forms import UserReservedForm
-from datetime import datetime
+
+from .models import Restoran, Hall, Table
+from reserver.models import Reservation
+from reserver.forms import ClientForm, ReservationForm
+
+from django.http import Http404
 
 
-class IndexView(View):
-
-    def get(self, request):
-        date = datetime.strftime(datetime.now(), '%Y-%m-%d')
-        return redirect('tables-view', date=date)
-
-    def post(self, request):
-        date = request.POST['date']
-        return redirect('tables-view', date=date)
+def print_html(*args, **kwargs):
+    raise Http404(args, kwargs)
 
 
-class TablesView(ListView):
-    template_name = 'base.html'
-    context_object_name = 'all_table'
-    model = Table
+class IndexView(ListView):
+    template_name = 'hall/restorans.html'
+    model = Restoran
+    context_object_name = 'restorans'
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context['reserved_table'] = tuple(
-            Reservation.objects.filter(
-                data_reserved=self.kwargs['date']).values_list('table_id'))
-        context['form'] = UserReservedForm()
+
+class RestoranDetailView(DetailView):
+    model = Restoran
+    template_name = 'hall/restoran.html'
+    context_object_name = 'restoran'
+    slug_field = 'name'
+    slug_url_kwarg = 'name'
+
+
+class HallDetailView(DetailView):
+    model = Hall
+    template_name = 'hall/hall.html'
+    context_object_name = 'hall'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+    client_form_class = ClientForm
+    reserver_form_class = ReservationForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        hall = self.object
+        qs_reserv = Reservation.objects.filter(
+            table=OuterRef('id'), date=self.kwargs['date'])
+        tables = tuple(hall.hall_struct.select_related('table')
+                       .annotate(
+                        reserved=Case(When(Exists(qs_reserv),
+                                      then=Value('busy')),
+                                      default=Value('free'),
+                                      output_field=CharField()),
+                        shape=F('table__shape'),
+                        width=F('table__width'),
+                        height=F('table__length'))
+                       .values('id', 'name_table', 'position_x',
+                               'position_y', 'seats', 'shape',
+                               'width', 'height', 'reserved')
+                       .distinct())
+
+        context['js_tables'] = tables
         context['date'] = self.kwargs['date']
+        context['js_board'] = {'width': hall.width, 'height': hall.length}
+        context['js_shape'] = {id: value for id, value in Table.SHAPE}
+
         return context
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)
-        number_table = request.POST.get('table')
-        data_reserved = request.POST.get('data_reserved')
-        if not Reservation.objects.filter(
-            Q(data_reserved=data_reserved) & Q(table__number=number_table)
-                ).exists():
-            user_form = UserReservedForm(request.POST)
-            if user_form.is_valid():
-                user = user_form.save()
-            r = Reservation(user=user, table=Table.objects.get(
-                number=number_table), data_reserved=data_reserved)
-            r.save()
-            messages.add_message(request, messages.INFO, "Cтолик забронирован")
-        else:
-            messages.add_message(request, messages.ERROR,
-                                 "Этот столик забронирован")
-        return self.get(request)
+        post_data = request.POST or None
+        client_form = self.client_form_class(post_data, prefix='client')
+        reserv_form = self.reserver_form_class(post_data, prefix='reserver')
+        if client_form.is_valid() and reserv_form.is_valid():
+            reserv_form.save(client=client_form.save(), hall=self.object)
+            messages.add_message(request, messages.INFO,
+                                 "Столик забронирован. Ждем Вас!")
+        return self.get(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        client_form = self.client_form_class(prefix='client')
+        reserv_form = self.reserver_form_class(prefix='reserver')
+        context = self.get_context_data(client_form=client_form,
+                                        reserv_form=reserv_form)
+        return self.render_to_response(context)
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)

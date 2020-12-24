@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Document</title>
+</head>
+<body>
+    <div class="sidenav">
+        <form class="" action="" method="post" id='id_form'>
+            {% csrf_token %}
+            {{form.as_p}}
+            <div id="id_info"></div>
+            <button type="button" name="button" id="button_add_board">Начать расстановку</button>
+            <button type="button" name="button" id="byttom_send_server">Сохранить</button>
+        </form>
+    </div>
+    <div id="id_board" class="board"></div>
+    <script type="text/javascript">
+        var data_tables = {{tables|safe}}
+    </script>
+    <script src="{% static 'js/my-script.js' %}" charset="utf-8"></script>
+    <script src="{% static 'js/create-scheme.js' %}" charset="utf-8" defer></script>
+</body>
+</html>

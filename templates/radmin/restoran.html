@@ -1,0 +1,20 @@
+{% extends "radmin/base_radmin.html" %}
+{% load static %}
+{% block content %}
+<div class="sidenav container">
+    <h4>{{restoran}}</h4>
+    <ul>
+        {% for hall in restoran.halls.all %}
+        <li>{{hall.name}}
+            <ul>
+            <li><a href="{{hall.get_absolute_url}}">Посмотреть на сайте</a></li>
+            <li><a href="{{hall.get_update_url}}">Редактировать</a></li>
+            <li><a href="{{hall.get_delete_url}}">Удалить</a></li>
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'create_scheme' name=restoran.name %}">Создать</a>
+</div>
+
+{% endblock content %}

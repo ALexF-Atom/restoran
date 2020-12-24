@@ -1,62 +1,22 @@
-{% load static %}
+{% load static bootstrap4 %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
-        <title>Выбор столика</title>
-    </head>
-    <body>
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Сообщение: {% endif %}
-                    {{ message }}
-                </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}">
+	{% bootstrap_css %}
+	{% block add_css %}{% endblock add_css %}
+	<title>{% block title %}{% endblock title %}</title>
+</head>
+<body>
+	{% block nav_bar %}{% endblock nav_bar %}
+	{% block content %}
+	{% endblock content %}
 
-        <div style="text-align: center;">
-            <h5>Выберите дату</h5>
-            <form action="{% url 'index' %}" method="POST">
-                {% csrf_token %}
-                <input type="date" name="date" id="id_date" value="{{date}}">
-                <input type="submit" name="" value="Перейти">
-            </form>
-        </div>
-
-        <div id="windowModal" class="modalWindow">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <form method="post" >
-                    {% csrf_token %}
-                    <p>
-                        <label for="id_table">Номер столика</label>
-                        <input type="text" name="table" value="" readonly>
-                    </p>
-                    <p>
-                        <label for="reserv_date">Забронировать на дату</label>
-                        <input type="text" name="data_reserved" value="" readonly>
-                    </p>
-                    {{form.as_p}}
-                    <button type="submit" name="button">Зарезервировать</button>
-                </form>
-            </div>
-        </div>
-
-        <div id="parent" class="hall">
-            {% for table in all_table %}
-                <div data-id="{{table.number}}" id="table{{table.id}}" class="free {{table.get_shape_display}}" style="{{table.get_style_css}}">
-                    <p>Количество мест {{table.seats}}</p>
-                    <p>Номер стола {{table.number}} </p>
-                </div>
-            {% endfor %}
-        </div>
-        {{reserved_table|json_script:'reserv'}}
-        <script src="{% static 'js/main.js' %}" charset="utf-8"></script>
-    </body>
+	{% block add_js %}
+	{% bootstrap_javascript jquery="slim" %}
+	{% endblock add_js %}
+</body>
 </html>

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+{% load bootstrap4 %}
+{% block add_css %}<link rel="stylesheet" href="{% static 'css/hall.css' %}">
+{% endblock add_css %}
+{% block title %}{{hall.slug}}{% endblock title %}
+
+{% block content %}
+
+{% bootstrap_messages %}
+
+<div id="windowModal" class="modalWindow">
+	<div class="modal-content">
+		<span class="close">&times;</span>
+		<form method="post" >
+			{% csrf_token %}
+			{% bootstrap_form client_form layout="horizontal" %}
+			{% bootstrap_form reserv_form layout="horizontal" %}
+			<button type="submit" name="button" class="btn btn-success">Зарезервировать</button>
+		</form>
+	</div>
+</div>
+
+	<div class="container ">
+		<div class="row mt-3 justify-content-center">
+			<div class="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-12 text-center font-weight-bolder">
+				Выберите дату
+			</div>
+		</div>
+		<div class="row justify-content-center">
+			<div class="col-xl-3 col-lg-3 col-md-5 col-sm-6 col-12 input-group">
+		  			<input type="date" class="form-control" aria-describedby="b_date" id="id_date" value="{{date}}">
+		  			<div class="input-group-append">
+		    			<button class="btn btn-outline-secondary" type="button"  id="b_date" onclick="getLink('{{hall.slug}}')" >Перейти</button>
+		  			</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="container mt-3 mb-3 field" id="place"></div>
+
+	<div class="container" id="id_info"></div>
+
+	{{js_board|json_script:'board'}}
+	{{js_shape|json_script:'shape'}}
+	{{js_tables|json_script:'tables'}}
+
+<script src="{% static 'js/script-hall.js' %}" charset="utf-8"></script>
+
+{% endblock content %}
+{% block add_js %} {{block.super}}{% endblock add_js %}
